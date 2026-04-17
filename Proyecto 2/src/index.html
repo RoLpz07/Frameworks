@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Visualizador del Tiempo</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="shell" id="app">
+      <section class="screen auth-screen" id="authScreen">
+        <header class="top">
+          <div class="brand">
+            <h1>Visualizador del Tiempo</h1>
+            <p class="subtitle">10 formas de leer la hora en tiempo real</p>
+          </div>
+        </header>
+
+        <section class="card auth" id="authCard">
+          <div class="card-head">
+            <h2>Acceso</h2>
+            <p>Inicia sesion o crea una cuenta para entrar al panel.</p>
+          </div>
+
+          <div class="mode">
+            <button id="modeLogin" class="active" type="button">Iniciar sesion</button>
+            <button id="modeRegister" type="button">Registro</button>
+          </div>
+
+          <form id="authForm" class="auth-form">
+            <label id="nameRow" hidden>
+              <span>Nombre</span>
+              <input id="nameInput" autocomplete="name" />
+            </label>
+
+            <label>
+              <span>Email</span>
+              <input id="emailInput" type="email" autocomplete="email" required />
+            </label>
+
+            <label>
+              <span>Clave</span>
+              <input id="passwordInput" type="password" autocomplete="current-password" required />
+            </label>
+
+            <button id="authSubmit" class="primary" type="submit">Entrar</button>
+            <p class="error" id="authError"></p>
+            <p class="hint">Demo rapido: demo@time.app / 1234</p>
+          </form>
+        </section>
+      </section>
+
+      <section class="screen dashboard-screen" id="dashboardScreen" hidden>
+        <header class="top dashboard-top">
+          <div class="brand">
+            <h1>Panel del Visualizador</h1>
+            <p class="subtitle">Personaliza la forma de ver el tiempo en vivo</p>
+          </div>
+          <p id="greeting" class="greeting"></p>
+        </header>
+
+        <section class="card controls" id="controlsCard">
+          <div class="card-head">
+            <h2>Panel de Control</h2>
+            <p>Selecciona un visualizador y desplaza el tiempo para demo.</p>
+          </div>
+
+          <div class="controls-grid">
+            <label>
+              <span>Visualizador</span>
+              <select id="viewSelect"></select>
+            </label>
+
+            <label>
+              <span>Ajuste de tiempo (segundos)</span>
+              <input id="offsetSlider" type="range" min="-43200" max="43200" step="1" value="0" />
+            </label>
+          </div>
+
+          <div class="row">
+            <small id="offsetLabel">0s</small>
+            <button id="logoutBtn" type="button">Cerrar sesion</button>
+          </div>
+        </section>
+
+        <section class="card viewer" id="viewerCard">
+        <div class="viewer-head">
+          <h2 id="viewTitle">Analogico SVG</h2>
+          <p id="viewDescription">Representacion visual del tiempo por horas, minutos y segundos.</p>
+        </div>
+
+        <article class="v digital" data-view="digital" hidden>
+          <h2 id="digitalClock">00:00:00</h2>
+          <p>Horas · Minutos · Segundos</p>
+        </article>
+
+        <article class="v" data-view="analog" hidden>
+          <svg viewBox="0 0 200 200" class="analog">
+            <circle cx="100" cy="100" r="92" class="dial"></circle>
+            <g id="hourTicks"></g>
+            <line id="hHand" x1="100" y1="100" x2="100" y2="56" class="hand h"></line>
+            <line id="mHand" x1="100" y1="100" x2="100" y2="40" class="hand m"></line>
+            <line id="sHand" x1="100" y1="100" x2="100" y2="30" class="hand s"></line>
+            <circle cx="100" cy="100" r="4" class="center"></circle>
+          </svg>
+        </article>
+
+        <article class="v bars" data-view="bars" hidden>
+          <div class="bar-row"><span>Horas</span><div class="bar"><i id="barH"></i></div><b id="barHText">00</b></div>
+          <div class="bar-row"><span>Minutos</span><div class="bar"><i id="barM"></i></div><b id="barMText">00</b></div>
+          <div class="bar-row"><span>Segundos</span><div class="bar"><i id="barS"></i></div><b id="barSText">00</b></div>
+        </article>
+
+        <article class="v rings" data-view="rings" hidden>
+          <div class="ring h"><span id="ringHValue">00h</span></div>
+          <div class="ring m"><span id="ringMValue">00m</span></div>
+          <div class="ring s"><span id="ringSValue">00s</span></div>
+        </article>
+
+        <article class="v binary" data-view="binary" hidden>
+          <div class="binary-row"><strong>H</strong><span id="binH"></span></div>
+          <div class="binary-row"><strong>M</strong><span id="binM"></span></div>
+          <div class="binary-row"><strong>S</strong><span id="binS"></span></div>
+        </article>
+
+        <article class="v hourglass-wrap" data-view="hourglass" hidden>
+          <div class="hourglass">
+            <div class="glass top"><i id="hgTop"></i></div>
+            <div class="neck"></div>
+            <div class="glass bottom"><i id="hgBottom"></i></div>
+          </div>
+          <p id="hourglassTime">00:00:00</p>
+        </article>
+
+        <article class="v type" data-view="type" hidden>
+          <h2 id="typeClock">00 00 00</h2>
+          <p>Tipografia viva por segundos y minutos</p>
+        </article>
+
+        <article class="v orbital" data-view="orbital" hidden>
+          <div class="orbit o1"><i id="orbH"></i></div>
+          <div class="orbit o2"><i id="orbM"></i></div>
+          <div class="orbit o3"><i id="orbS"></i></div>
+          <p id="orbitalTime">00 · 00 · 00</p>
+        </article>
+
+        <article class="v columns" data-view="columns" hidden>
+          <div class="column"><div class="column-bar"><i id="colHFill"></i></div><span id="colHText">H 00</span></div>
+          <div class="column"><div class="column-bar"><i id="colMFill"></i></div><span id="colMText">M 00</span></div>
+          <div class="column"><div class="column-bar"><i id="colSFill"></i></div><span id="colSText">S 00</span></div>
+        </article>
+
+        <article class="v timeline" data-view="timeline" hidden>
+          <div class="line"><label>H</label><span><i id="lineH"></i></span><b id="lineHText">00</b></div>
+          <div class="line"><label>M</label><span><i id="lineM"></i></span><b id="lineMText">00</b></div>
+          <div class="line"><label>S</label><span><i id="lineS"></i></span><b id="lineSText">00</b></div>
+        </article>
+        </section>
+      </section>
+    </main>
+    <script type="module" src="./main.js"></script>
+  </body>
+</html>
